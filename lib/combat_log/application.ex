@@ -8,7 +8,8 @@ defmodule CombatLog.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      CombatLog.Entity.Supervisor
+      CombatLog.World,
+      {Registry, keys: :duplicate, name: CombatLog.EntityRegistry, partitions: System.schedulers_online()}
     ]
 
     opts = [strategy: :one_for_one, name: CombatLog.Supervisor]
