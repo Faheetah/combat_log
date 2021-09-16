@@ -21,10 +21,7 @@ defmodule CombatLog do
   end
 
   def zombie() do
-    CombatLog.Entities.Zombie.spawn(%{
-      strength: 1,
-      stamina: 2
-    })
+    CombatLog.Entities.Zombie.spawn(%{})
     |> then(fn {:ok, entity} -> entity end)
   end
 

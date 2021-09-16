@@ -1,4 +1,4 @@
-defmodule CombatLog.Components.Stats do
+defmodule CombatLog.Components.StatComponent do
   # this module should be split up into more granular components
 
   defstruct [
