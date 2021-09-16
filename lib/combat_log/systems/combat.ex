@@ -5,7 +5,6 @@ defmodule CombatLog.Systems.Combat do
 
   def attack(source, target) do
     source_entity = Entity.get(source)
-    IO.inspect source_entity.components[HealthComponent]
     source_stats = Entity.get_component(source_entity, StatComponent)
     target_entity = Entity.get(target)
     target_stats = Entity.get_component(target_entity, StatComponent)
