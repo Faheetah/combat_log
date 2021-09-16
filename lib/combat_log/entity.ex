@@ -15,7 +15,7 @@ defmodule CombatLog.Entity do
   ]
 
   def add_component(entity = %__MODULE__{}, component, val) do
-    Map.put(entity, :components, Map.put(entity.components, component, val))
+    Map.put(entity, :components, Map.put(entity.components, component, struct(component, val)))
   end
 
   def get_component(entity = %__MODULE__{}, component) do

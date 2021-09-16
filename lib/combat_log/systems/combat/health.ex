@@ -2,7 +2,7 @@ defmodule CombatLog.Systems.Combat.HealthSystem do
   alias CombatLog.Entity
   alias CombatLog.Components.{HealthComponent,StatComponent}
 
-  def calculate_health(stamina), do: stamina * 10
+  def calculate_health(stamina), do: stamina * 5
 
   def max_health(entity) do
     stats = Entity.get_component(entity, StatComponent)

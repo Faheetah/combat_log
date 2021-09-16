@@ -1,7 +1,7 @@
 defmodule CombatLog.Systems.Player do
   alias CombatLog.Systems.Combat
 
-  def new_player(name) do
+  def roll(name) do
     stats = %{
       strength: :rand.uniform(10),
       stamina: :rand.uniform(10),
@@ -11,23 +11,31 @@ defmodule CombatLog.Systems.Player do
       wisdom: :rand.uniform(10),
       charisma: :rand.uniform(10)
     }
+    new_player(name, stats)
+  end
+
+  def new_player(name, stats) do
+    {:ok, player} = CombatLog.Entities.Player.spawn(name, stats)
 
     stat_names =
-      stats
+      CombatLog.Entity.get(player)
+      |> Map.get(:components)
+      |> Map.get(CombatLog.Components.StatComponent)
+      |> Map.to_list()
+      |> Keyword.delete(:__struct__)
       |> Enum.map(fn {stat, val} -> "#{stat}: #{val}" end)
       |> Enum.join("\n")
 
     IO.puts "Generated #{name} with stats:\n#{stat_names}\n"
 
-    CombatLog.Entities.Player.spawn(name, stats)
+    {:ok, player}
   end
 
-  def attack(player, target) do
-    case Combat.attack(player, target) do
-      :dead ->
-        nil
-      _ ->
-        attack(player, target)
+  def attack(player, target, turns \\ 1) do
+    unless Combat.attack(player, target) == :dead do
+      attack(player, target, turns + 1)
+    else
+      IO.puts "Dead in #{turns} turns"
     end
   end
 end

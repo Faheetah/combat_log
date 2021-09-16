@@ -1,20 +1,33 @@
 defmodule CombatLog.Systems.Combat do
   alias CombatLog.Entity
-  alias CombatLog.Components.{HealthComponent,StatComponent}
+  alias CombatLog.Components.HealthComponent
   alias CombatLog.Systems.Combat.{HealthSystem,DamageSystem}
 
   def attack(source, target) do
     source_entity = Entity.get(source)
-    source_stats = Entity.get_component(source_entity, StatComponent)
     target_entity = Entity.get(target)
-    target_stats = Entity.get_component(target_entity, StatComponent)
-    target_health = Entity.get_component(target_entity, HealthComponent)
-    damage = DamageSystem.melee(source_stats, target_stats)
-    if target_health.alive do
-      IO.puts "#{source_entity.name} damages #{target_entity.name} for #{damage} (#{target_health.health}hp left)"
-      Entity.update(target, HealthSystem.damage(target_entity, damage))
+    {type, damage} = DamageSystem.melee(source_entity, target_entity)
+    result = HealthSystem.damage(target_entity, damage)
+    health = result.components[HealthComponent]
+    if health.alive do
+      case type do
+        :miss ->
+          IO.puts "#{source_entity.name} missed #{target_entity.name}"
+
+        :hit ->
+          IO.puts "#{source_entity.name} hit #{target_entity.name} for #{damage} damage (#{health.health}hp left)"
+          Entity.update(target, HealthSystem.damage(target_entity, damage))
+
+        :crit ->
+          IO.puts "#{source_entity.name} critical hit #{target_entity.name} for #{damage} damage (#{health.health}hp left)"
+          Entity.update(target, HealthSystem.damage(target_entity, damage))
+
+        :crush ->
+          IO.puts "#{source_entity.name} crushing blow #{target_entity.name} for #{damage} damage (#{health.health}hp left)"
+          Entity.update(target, HealthSystem.damage(target_entity, damage))
+      end
     else
-      IO.puts "target #{target_entity.name} is dead"
+      IO.puts "#{source_entity.name} hit #{target_entity.name} for #{damage} damage (fatal blow)"
       :dead
     end
   end
