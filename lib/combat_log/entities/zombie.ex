@@ -5,8 +5,15 @@ defmodule CombatLog.Entities.Zombie do
 
   def spawn(level \\ 1) do
     stamina = Enum.random(1..3) + level
-    %Entity{name: "zombie"}
-    |> Entity.add_component(StatComponent, %{level: level, stamina: stamina, strength: Enum.random(1..3)})
+    {agility, ext} =
+      if :rand.uniform(ceil(1000 / level)) == 1 do
+        {level, " (MJ)"}
+      else
+        {1, ""}
+      end
+
+    %Entity{name: "zombie#{ext}"}
+    |> Entity.add_component(StatComponent, %{level: level, agility: agility, stamina: stamina, strength: Enum.random(1..3)})
     |> Entity.add_component(HealthComponent, %{health: 0})
     |> HealthSystem.heal(:full)
     |> Entity.spawn()
