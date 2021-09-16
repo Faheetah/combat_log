@@ -1,3 +1,3 @@
 defmodule CombatLog.Components.Health do
-  defstruct [:health]
+  defstruct [:health, alive: true]
 end

@@ -10,7 +10,7 @@ defmodule CombatLog.Entity do
 
   defstruct [
     :id,
-    :pid,
+    :name,
     components: %{}
   ]
 
@@ -33,23 +33,33 @@ defmodule CombatLog.Entity do
     GenServer.start_link(__MODULE__, entity)
   end
 
-  @impl true
-  def init(entity) do
-    register_components(entity.components, entity.id)
-    {:ok, entity}
-  end
-
   def get(entity) do
-    Agent.get(entity, & &1)
+    GenServer.call(entity, :get)
   end
 
   def update(entity, values) do
-    Agent.update(entity, fn _ -> values end)
+    GenServer.cast(entity, {:update, values})
   end
 
   def register_components(components, pid) do
     Enum.each(components, fn {component, _} ->
       Registry.register(EntityRegistry, component, pid)
     end)
+  end
+
+  @impl true
+  def init(entity) do
+    register_components(entity.components, entity.id)
+    {:ok, entity}
+  end
+
+  @impl true
+  def handle_call(:get, _from, state) do
+    {:reply, state, state}
+  end
+
+  @impl true
+  def handle_cast({:update, values}, _state) do
+    {:noreply, values}
   end
 end
