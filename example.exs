@@ -1,3 +1,4 @@
+IO.puts "CombatLog version #{Mix.Project.config[:version]}"
 stats = %{
   strength: IO.gets("Strength: ") |> Integer.parse |> then(fn {n,_} -> n end),
   dexterity: IO.gets("Dexterity: ") |> Integer.parse |> then(fn {n,_} -> n end)
